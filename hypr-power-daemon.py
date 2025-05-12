@@ -3,6 +3,11 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 v0x1m1r
 
+
+# Toggle what gets changed to true/false [1 = enabled = 0 disabled]
+TOGGLE_SHADOW = 1
+TOGGLE_BLUR = 0
+
 # imports
 import time
 import os
@@ -20,40 +25,47 @@ def is_plugged_in(): # checks for status, no need to really touch this
     except Exception:
         return False
 
-# config updating, if you only need to toggle blur and shadows you should be fine with the code bellow
-def update_config(plugged): 
+# the actual code
+def update_config(plugged):
     with open(HYPR_CONFIG, "r") as f:
         lines = f.readlines()
 
     new_lines = []
-    for line in lines:
-        if "blur {" in line:
-            blur_block = True
-        if "shadow {" in line:
-            shadow_block = True
+    inside_blur = False
+    inside_shadow = False
 
-        if "blur {" in line or "shadow {" in line:
+    for line in lines:
+        stripped = line.strip()
+
+        if stripped.startswith("blur {"):
+            inside_blur = True
+            new_lines.append(line)
+            continue
+        elif stripped.startswith("shadow {"):
+            inside_shadow = True
+            new_lines.append(line)
+            continue
+        elif stripped.startswith("}"):
+            inside_blur = False
+            inside_shadow = False
             new_lines.append(line)
             continue
 
-        if "blur {" in line or "shadow {" in line:
-            blur_block = False
-            shadow_block = False
+        if "enabled = " in stripped:
+            if inside_blur and TOGGLE_BLUR:
+                new_lines.append("        enabled = {}\n".format("true" if plugged else "false"))
+                continue
+            elif inside_shadow and TOGGLE_SHADOW:
+                new_lines.append("        enabled = {}\n".format("true" if plugged else "false"))
+                continue
 
-        if "enabled = " in line and "blur" in "".join(new_lines[-3:]):
-            new_lines.append(f"        enabled = {'true' if plugged else 'false'}\n")
-        elif "enabled = " in line and "shadow" in "".join(new_lines[-3:]):
-            new_lines.append(f"        enabled = {'true' if plugged else 'false'}\n")
-        else:
-            new_lines.append(line)
+        new_lines.append(line)
 
     with open(HYPR_CONFIG, "w") as f:
         f.writelines(new_lines)
 
-    # make hyprland reload
     subprocess.run(["hyprctl", "reload"], check=False)
-
-
+# checks for status, no need to really touch this
 def main():
     last_state = None
     while True:
