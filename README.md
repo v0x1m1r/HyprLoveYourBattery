@@ -70,15 +70,6 @@ Applies changes using:
 
     hyprctl reload
 
-## 🧪 Optional Improvements
-
-Want to make it even more power-efficient?
-
-   * 💤 Event-driven version: Replace polling with inotify for zero CPU wakeups
-
-   * ⏲️ Adjust poll interval: Increase the sleep time to 30s or 60s if using polling
-
-   * 🔋 Integrate with tlp or power-profiles-daemon for smarter management
 
 #  🛡️ License
 
