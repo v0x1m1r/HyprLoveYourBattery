@@ -37,15 +37,15 @@ HyprLoveYourBattery/
    ```bash
    git clone https://github.com/yourusername/HyprLoveYourBattery.git
 
-Move the script to your Hyprland config:
+2. Move the script to your Hyprland config:
+   ```bash
+   mkdir -p ~/.config/hypr/scripts
+   cp HyprLoveYourBattery/hypr-power-daemon.py ~/.config/hypr/scripts/
+   chmod +x ~/.config/hypr/scripts/hypr-power-daemon.py
 
-mkdir -p ~/.config/hypr/scripts
-cp HyprLoveYourBattery/hypr-power-daemon.py ~/.config/hypr/scripts/
-chmod +x ~/.config/hypr/scripts/hypr-power-daemon.py
-
-Add to Hyprland autostart:
+3. Add to Hyprland autostart:
 Edit ~/.config/hypr/hyprland.conf and add:
-
+   ```bash
     exec-once = ~/.config/hypr/scripts/hypr-power-daemon.py
 
 ## 🧠 How It Works
